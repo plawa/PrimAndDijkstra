@@ -5,5 +5,7 @@ class Macierzowo {
 public:
 	Macierzowo();
 	~Macierzowo();
-};
 
+private:
+
+};
