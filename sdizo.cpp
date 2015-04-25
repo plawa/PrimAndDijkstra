@@ -7,7 +7,6 @@ private:
 
 };
 
-
 void main()
 {
 	return;

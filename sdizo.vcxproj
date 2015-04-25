@@ -79,11 +79,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Macierzowo.h" />
     <ClInclude Include="PomiarCzasu.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Macierzowo.cpp" />
     <ClCompile Include="PomiarCzasu.cpp" />
     <ClCompile Include="sdizo.cpp" />
     <ClCompile Include="stdafx.cpp">
