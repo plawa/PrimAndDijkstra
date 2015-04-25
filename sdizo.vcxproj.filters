@@ -30,6 +30,9 @@
     <ClInclude Include="Macierzowo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Listowo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Macierzowo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Listowo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

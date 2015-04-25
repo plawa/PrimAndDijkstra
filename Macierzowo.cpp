@@ -2,11 +2,5 @@
 #include "Macierzowo.h"
 
 
-Macierzowo::Macierzowo()
-{
-}
-
-
-Macierzowo::~Macierzowo()
-{
-}
+Macierzowo::Macierzowo(){}
+Macierzowo::~Macierzowo(){}

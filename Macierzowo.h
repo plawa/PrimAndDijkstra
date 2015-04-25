@@ -1,6 +1,7 @@
 #pragma once
-class Macierzowo
-{
+#include "stdafx.h"
+
+class Macierzowo {
 public:
 	Macierzowo();
 	~Macierzowo();
