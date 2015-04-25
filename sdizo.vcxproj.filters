@@ -30,9 +30,6 @@
     <ClInclude Include="Listowo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sdizo2.h">
       <Filter>Header Files</Filter>
     </ClInclude>

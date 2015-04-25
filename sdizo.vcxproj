@@ -78,7 +78,6 @@
   <ItemGroup>
     <ClInclude Include="Listowo.h" />
     <ClInclude Include="Macierzowo.h" />
-    <ClInclude Include="Main.h" />
     <ClInclude Include="PomiarCzasu.h" />
     <ClInclude Include="Sdizo2.h" />
     <ClInclude Include="stdafx.h" />
