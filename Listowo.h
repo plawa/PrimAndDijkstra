@@ -6,5 +6,5 @@ public:
 	bool wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 private:
 	bool pierwszeWczytywanie;
-	FILE *plik;
+	FILE *plik; //fdsagdsggasd
 };
