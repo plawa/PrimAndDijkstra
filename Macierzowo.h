@@ -5,16 +5,20 @@ class Macierzowo {
 public:
 	Macierzowo();
 	~Macierzowo();
-	bool utworzGraf(int iloscWierzcholkow, int iloscKrawedzi);
 	bool algorytmPrima();
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
-	void wyswietl();
+	void wyswietl(bool wagi = false); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
+	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
+	bool generujLosowoSkierowany(int v, int gestosc); //gêstoœæ w %
 private:
-	void usunGraf();
+	bool utworzGraf(int iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
+	bool utworzGraf(); //tworzy pusty graf nie zmieniaj¹c obecnej iloœci wierzcho³ków
+	void usunGraf(); //czyœci pamiêæ z nieu¿ywanego ju¿ grafu
 	bool pierwszeWczytywanie;
 	unsigned int **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
+	unsigned int **waga; //nr wiersza/nr kolumny - macierz wag krawêdzi
 	int v; //iloœæ wierzcho³ków
 	int e; //iloœæ krawêdzi
 	int v0; //nr wierzcho³ka pocz¹tkowego
-	FILE *plik;
+	FILE *plik; //uchwyt I/O
 };

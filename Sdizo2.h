@@ -8,8 +8,10 @@ public:
 	void menu();
 private:
 	void wyswietlGraf();
-	void wczytajGraf();
-	void wczytajGrafPNS(); //dla problemu najkrótszej œcie¿ki
+	void wczytajGraf(bool dlaPNS); //dlaProblemu najkrotszej œcie¿ki
+	void generujGraf(bool dlaPNS);
+	void algorytmPrima();
+	void algorytmDijkstry();
 	Macierzowo macierzowo;
 	Listowo listowo;
 };
