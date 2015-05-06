@@ -7,7 +7,7 @@ public:
 	~Macierzowo();
 	bool algorytmPrima();
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
-	void wyswietl(bool wagi = false); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
+	void wyswietl(); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
 	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
 	bool generujLosowoSkierowany(int v, int gestosc); //gêstoœæ w %
 private:
@@ -16,7 +16,6 @@ private:
 	void usunGraf(); //czyœci pamiêæ z nieu¿ywanego ju¿ grafu
 	bool pierwszeWczytywanie;
 	unsigned int **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
-	unsigned int **waga; //nr wiersza/nr kolumny - macierz wag krawêdzi
 	int v; //iloœæ wierzcho³ków
 	int e; //iloœæ krawêdzi
 	int v0; //nr wierzcho³ka pocz¹tkowego
