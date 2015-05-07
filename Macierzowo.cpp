@@ -16,7 +16,7 @@ bool Macierzowo::algorytmPrima(){
 }
 
 bool Macierzowo::utworzGraf(int iloscWierzcholkow){
-	if (!pierwszeWczytywanie)//jeœli graf tworzony jest niepierwszy raz w obecnym obiekcie
+	if (pierwszeWczytywanie == false)//jeœli graf tworzony jest niepierwszy raz w obecnym obiekcie
 		usunGraf(); //to czyœcimy
 	v = iloscWierzcholkow;
 	unsigned int **tempGraf = new unsigned int*[v];
@@ -25,6 +25,7 @@ bool Macierzowo::utworzGraf(int iloscWierzcholkow){
 		for (int j = 0; j < v; j++)
 			tempGraf[i][j] = 0; //inicjalizacja zerami, które oznaczaj¹ ¿e danych dwóch wierzcho³ków nie ³¹czy ¿adna krawêdŸ
 	}
+	pierwszeWczytywanie = false;
 	graf = tempGraf;
 	return true;
 }
@@ -34,6 +35,15 @@ bool Macierzowo::utworzGraf(){
 }
 
 bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
+	//inicjalizacja macierzy, która przechowywaæ bêdzie informacje czy dana komórka zosta³a ju¿ wczeœniej edytowana przez generator
+	bool **zmodyfikowane = new bool*[v];
+	for (int i = 0; i < v; i++){
+		zmodyfikowane[i] = new bool[v];
+		for (int j = 0; j < v; j++)
+			zmodyfikowane[i][j] = false;
+		zmodyfikowane[i][i] = true; //blokada przek¹tnej (maj¹ tam byæ same zera)
+	}//koniec inicjalizacji macierzy boolowskiej
+	
 	int licznik = 0, minProcent = static_cast<int>(ceil(static_cast<float>(200 / v))); //min procent krawêdzi, aby graf by³ spójny
 	int maxE = v*(v - 1) / 2; //max iloœæ krawêdzi dla grafu nieskierowanego
 	e = (int)floor((float)(maxE * gestosc / 100)); //iloœæ krawêdzi do dodania wyliczona na podstawie gêstoœci
@@ -41,13 +51,16 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 		return false;
 	utworzGraf(v);
 	//iteracja poni¿ej nastêpuje po "trójk¹cie" - czêœci tablicy, która bêdzie symetrycznie odbijana wzglêdem przek¹tnej
-	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu
-		graf[i][i + 1] = graf[i + 1][i] = rand() % 9 + 1; //³¹czê wierzcho³ki (1->2->3->4 ...), tworz¹c najpierw graf spójny z wagami 1 do 9
+	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu (zapewnienie spójnoœci)
+		//³¹czê wierzcho³ki (1->2->3->4 ...), tworz¹c najpierw graf spójny z wagami 1 do 9 i "odznaczam" w zmodyfikowanych
+		zmodyfikowane[i][i + 1] = zmodyfikowane[i + 1][i] = graf[i][i + 1] = graf[i + 1][i] = rand() % 9 + 1; 
 		licznik++;
 	}
-	for (int i = 0; i < v - 2 && licznik < e; i++) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
-		for (int j = i + 2; j < v && licznik < e; j++){
-			graf[i][j] = graf[j][i] = rand() % 9 + 1;
+	while (licznik < e) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
+		int wiersz = rand() % v;
+		int kolumna = rand() % v;
+		if (zmodyfikowane[wiersz][kolumna] == false) {
+			zmodyfikowane[wiersz][kolumna] = zmodyfikowane[kolumna][wiersz] = graf[wiersz][kolumna] = graf[kolumna][wiersz] = rand() % 9 + 1;
 			licznik++;
 		}
 	}
@@ -55,20 +68,31 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 }
 
 bool Macierzowo::generujLosowoSkierowany(int v, int gestosc){
-	int licznik = 0;
-	int maxE = v * (v - 1); //max iloœæ krawêdzi dla grafu skierowanego
+	//inicjalizacja macierzy, która przechowywaæ bêdzie informacje czy dana komórka zosta³a ju¿ wczeœniej edytowana przez generator
+	bool **zmodyfikowane = new bool*[v];
+	for (int i = 0; i < v; i++){
+		zmodyfikowane[i] = new bool[v];
+		for (int j = 0; j < v; j++)
+			zmodyfikowane[i][j] = false; 
+		zmodyfikowane[i][i] = true; //blokada, bo po przek¹tnej tylko zera
+	}//koniec inicjalizacji macierzy boolowskiej
+
+	int licznik = 0, maxE = v * (v - 1); //max mo¿liwa iloœæ krawêdzi dla grafu skierowanego
 	int minProcent = static_cast<int>(ceil(static_cast<float>(100/v)));
-	e = (int)floor((float)(maxE * gestosc / 100)); //iloœæ krawêdzi wyliczona na podstawie gêstoœci
-	if (gestosc < minProcent || gestosc > 100) //procenty musz¹ siê zgadzaæ
+	e = static_cast<int>( floor( static_cast<float>(maxE*gestosc/100) ) ); //iloœæ krawêdzi wyliczona na podstawie gêstoœci
+	if (gestosc < minProcent || gestosc > 100)
 		return false;
 	utworzGraf(v);
 	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu
-		graf[i][i + 1] = rand() % 9 + 1; //³¹czê wierzcho³ki (1->2->3->4 ...), tworz¹c najpierw graf spójny z wagami 1 do 9
+		//³¹czê wierzcho³ki (1->2->3->4->...), tworz¹c najpierw graf spójny z wagami 1 do 9 i "odznaczam" w zmodyfikowanych
+		zmodyfikowane[i][i + 1] = graf[i][i + 1] = rand() % 9 + 1; 
 		licznik++;
 	}
-	for (int i = 0; i < v - 2 && licznik < e; i++) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
-		for (int j = i + 2; j < v && licznik < e; j++){
-			graf[i][j] = rand() % 9 + 1; //DO ZROBIENIA, KOREKTA GENEROWANIA BEZ SYMETRII
+	while(licznik < e) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
+		int wiersz = rand() % v;
+		int kolumna = rand() % v;
+		if (zmodyfikowane[wiersz][kolumna] == false) {
+			zmodyfikowane[wiersz][kolumna] = graf[wiersz][kolumna] = rand() % 9 + 1;
 			licznik++;
 		}
 	}
@@ -76,11 +100,8 @@ bool Macierzowo::generujLosowoSkierowany(int v, int gestosc){
 }
 
 void Macierzowo::wyswietl(){
-	printf("  "); //kosmetyka
-	for (int i = 0; i < v; i++)
-		printf("%d ", i);
-	for (int i = 0; i < v; i++) {
-		printf("\n%d ", i);
+	for (int i = 0; i < v; i++){
+		printf("\n");
 		for (int j = 0; j < v; j++)
 			printf("%d ", graf[i][j]);
 	}
