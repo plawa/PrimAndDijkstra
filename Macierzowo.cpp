@@ -54,7 +54,8 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 	//iteracja poni¿ej nastêpuje po "trójk¹cie" - czêœci tablicy, która bêdzie symetrycznie odbijana wzglêdem przek¹tnej
 	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu (zapewnienie spójnoœci)
 		//³¹czê wierzcho³ki (1->2->3->4 ...), tworz¹c najpierw graf spójny z wagami 1 do 9 i "odznaczam" w zmodyfikowanych
-		zmodyfikowane[i][i + 1] = zmodyfikowane[i + 1][i] = graf[i][i + 1] = graf[i + 1][i] = rand() % 9 + 1; 
+		graf[i][i + 1] = graf[i + 1][i] = rand() % 9 + 1; 
+		zmodyfikowane[i][i + 1] = zmodyfikowane[i + 1][i] = true;
 		licznik++;
 	}
 	while (licznik < e) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
@@ -62,7 +63,8 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 		int kolumna = rand() % v;
 		int waga = rand() % 9 + 1;
 		if (zmodyfikowane[wiersz][kolumna] == false) {
-			zmodyfikowane[wiersz][kolumna] = zmodyfikowane[kolumna][wiersz] = graf[wiersz][kolumna] = graf[kolumna][wiersz] = waga;
+			graf[wiersz][kolumna] = graf[kolumna][wiersz] = waga;
+			zmodyfikowane[wiersz][kolumna] = zmodyfikowane[kolumna][wiersz] = true;
 			licznik++;
 		}
 	}
@@ -82,19 +84,22 @@ bool Macierzowo::generujLosowoSkierowany(int v, int gestosc){
 	int licznik = 0, maxE = v * (v - 1); //max mo¿liwa iloœæ krawêdzi dla grafu skierowanego
 	int minProcent = static_cast<int>(ceil(static_cast<float>(100/v)));
 	e = static_cast<int>( floor( static_cast<float>(maxE*gestosc/100) ) ); //iloœæ krawêdzi wyliczona na podstawie gêstoœci
+	v0 = rand() % v; //losowanie wierzcho³ka pocz¹tkowego dla PNS
 	if (gestosc < minProcent || gestosc > 100)
 		return false;
 	utworzGraf(v);
 	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu
 		//³¹czê wierzcho³ki (1->2->3->4->...), tworz¹c najpierw graf spójny z wagami 1 do 9 i "odznaczam" w zmodyfikowanych
-		zmodyfikowane[i][i + 1] = graf[i][i + 1] = rand() % 9 + 1; 
+		graf[i][i + 1] = rand() % 9 + 1; 
+		zmodyfikowane[i][i + 1] = true;
 		licznik++;
 	}
 	while(licznik < e) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
 		int wiersz = rand() % v;
 		int kolumna = rand() % v;
 		if (zmodyfikowane[wiersz][kolumna] == false) {
-			zmodyfikowane[wiersz][kolumna] = graf[wiersz][kolumna] = rand() % 9 + 1;
+			graf[wiersz][kolumna] = rand() % 9 + 1;
+			zmodyfikowane[wiersz][kolumna] = true;
 			licznik++;
 		}
 	}

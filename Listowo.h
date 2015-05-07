@@ -19,8 +19,6 @@ public:
 	void wyswietl();
 	bool algorytmPrima(); //////
 	bool algorytmDijkstry(); ///////
-	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
-	bool generujLosowoSkierowany(int v, int gestosc); //gêstoœæ w %
 	bool kopiujZMacierzyNieskierowany(Macierzowo *macierz);
 	bool kopiujZMacierzySkierowany(Macierzowo *macierz);
 private:
