@@ -10,6 +10,7 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <time.h>
+#include <list>
 
 #include "PomiarCzasu.h"
 // TODO: reference additional headers your program requires here

@@ -1,6 +1,8 @@
 #pragma once
-#include <list>
+#include "Macierzowo.h"
 using namespace std;
+
+class Macierzowo; //deklaracja na potrzebê u¿ycia instancji tej klasy
 
 struct krawedz { //struktura reprezentuj¹ca krawêdŸ, bêdzie u¿ywana w liscie
 	krawedz(unsigned int sas, unsigned int wag){
@@ -15,6 +17,12 @@ public:
 	~Listowo();
 	bool wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl();
+	bool algorytmPrima(); //////
+	bool algorytmDijkstry(); ///////
+	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
+	bool generujLosowoSkierowany(int v, int gestosc); //gêstoœæ w %
+	bool kopiujZMacierzyNieskierowany(Macierzowo *macierz);
+	bool kopiujZMacierzySkierowany(Macierzowo *macierz);
 private:
 	bool utworzGraf(int iloscWierzcholkow);
 	bool utworzGraf();

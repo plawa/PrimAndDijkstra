@@ -25,8 +25,8 @@ bool Macierzowo::utworzGraf(int iloscWierzcholkow){
 		for (int j = 0; j < v; j++)
 			tempGraf[i][j] = 0; //inicjalizacja zerami, które oznaczaj¹ ¿e danych dwóch wierzcho³ków nie ³¹czy ¿adna krawêdŸ
 	}
-	pierwszeWczytywanie = false;
 	graf = tempGraf;
+	pierwszeWczytywanie = false;
 	return true;
 }
 
@@ -44,7 +44,8 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 		zmodyfikowane[i][i] = true; //blokada przek¹tnej (maj¹ tam byæ same zera)
 	}//koniec inicjalizacji macierzy boolowskiej
 	
-	int licznik = 0, minProcent = static_cast<int>(ceil(static_cast<float>(200 / v))); //min procent krawêdzi, aby graf by³ spójny
+	int licznik = 0;
+	int minProcent = static_cast<int>(ceil(static_cast<float>(200 / v))); //min procent krawêdzi, aby graf by³ spójny
 	int maxE = v*(v - 1) / 2; //max iloœæ krawêdzi dla grafu nieskierowanego
 	e = (int)floor((float)(maxE * gestosc / 100)); //iloœæ krawêdzi do dodania wyliczona na podstawie gêstoœci
 	if (gestosc < minProcent || gestosc > 100)
@@ -59,8 +60,9 @@ bool Macierzowo::generujLosowoNieskierowany(int v, int gestosc){
 	while (licznik < e) { //nastêpnie uzupe³nianie losowymi wartoœciami do uzyskania po¿¹danej iloœci krawêdzi
 		int wiersz = rand() % v;
 		int kolumna = rand() % v;
+		int waga = rand() % 9 + 1;
 		if (zmodyfikowane[wiersz][kolumna] == false) {
-			zmodyfikowane[wiersz][kolumna] = zmodyfikowane[kolumna][wiersz] = graf[wiersz][kolumna] = graf[kolumna][wiersz] = rand() % 9 + 1;
+			zmodyfikowane[wiersz][kolumna] = zmodyfikowane[kolumna][wiersz] = graf[wiersz][kolumna] = graf[kolumna][wiersz] = waga;
 			licznik++;
 		}
 	}

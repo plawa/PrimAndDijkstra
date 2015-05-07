@@ -1,11 +1,14 @@
 #pragma once
 #include "stdafx.h"
+#include "Listowo.h"
 
 class Macierzowo {
+	friend class Listowo;
 public:
 	Macierzowo();
 	~Macierzowo();
-	bool algorytmPrima();
+	bool algorytmPrima(); //////
+	bool algorytmDijkstry(); //////
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl(); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
 	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
