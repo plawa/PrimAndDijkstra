@@ -21,7 +21,6 @@ struct krawedz {
 struct porownajWagi {
 	bool operator() (const krawedz &krawedz1, const krawedz &krawedz2){
 		if (krawedz1.waga > krawedz2.waga) return true;
-		if (krawedz1.waga <= krawedz2.waga) return false;
 		else return false;
 	}
 };
@@ -80,7 +79,7 @@ uint Macierzowo::algorytmPrima(){
 			}
 		}
 	}
-	wyswietl(drzewoRozpinajace = tempDrzewoRozp);
+	wyswietl(drzewoRozpinajace = tempDrzewoRozp); //przypisz i wyswietl
 	return sumaWag;
 }
 
@@ -182,6 +181,7 @@ void Macierzowo::wyswietl(uint **macierz){
 		for (uint j = 0; j < v; j++)
 			printf("%d ", macierz[i][j]);
 	}
+	printf("\n");
 }
 
 void Macierzowo::wyswietl(){

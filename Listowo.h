@@ -8,6 +8,7 @@ class Macierzowo; //deklaracja dla kompilatora ze wzglêdu na potrzebê u¿ycia ins
 struct krawedz;
 struct porownajWagi;
 typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
+typedef unsigned int uint;
 
 class Listowo {
 public:
@@ -15,18 +16,20 @@ public:
 	~Listowo();
 	bool wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl();
-	bool algorytmPrima(); //////
+	uint algorytmPrima();
 	bool algorytmDijkstry(); ///////
 	bool kopiujZMacierzyNieskierowany(Macierzowo *macierz);
 	bool kopiujZMacierzySkierowany(Macierzowo *macierz);
 private:
-	bool utworzGraf(int iloscWierzcholkow);
+	bool utworzGraf(uint iloscWierzcholkow);
 	bool utworzGraf();
 	void usunGraf();
+	void wyswietl(list<krawedz> *graf);
 	bool pierwszeWczytywanie;
-	int v; //iloœæ wierzcho³ków
-	int e; //iloœæ krawêdzi
-	int v0; //nr wierzcho³ka pocz¹tkowego
+	uint v; //iloœæ wierzcho³ków
+	uint e; //iloœæ krawêdzi
+	uint v0; //nr wierzcho³ka pocz¹tkowego
 	list<krawedz> *graf; //tablica list ze strukturami odpowiadaj¹cymi krawêdziom
+	list<krawedz> *MST; //tablica list z krawêdzami minimalnego drzewa rozpinaj¹cego (dla alg Prima)
 	FILE *plik; //uchwyt I/O
 };

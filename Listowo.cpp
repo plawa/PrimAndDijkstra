@@ -5,10 +5,10 @@
 //Jej pocz¹tkowy wierzcho³ek reprezentuje index tablicy pod którym sie znajduje.
 //----------------------------------------------------------------------------
 struct krawedz {
-	krawedz(unsigned int sas, unsigned int wag){
-		sasiad = sas, waga = wag;
+	krawedz(uint poczatek, uint koniec, uint wag){
+		v1 = poczatek, v2 = koniec, waga = wag;
 	}
-	unsigned int sasiad, waga;
+	uint v1, v2, waga;
 };
 
 //Struktura stworzona na potrzeby implementacji kolejki priorytetowej.
@@ -17,7 +17,7 @@ struct krawedz {
 struct porownajWagi {
 	bool operator() (const krawedz &krawedz1, const krawedz &krawedz2){
 		if (krawedz1.waga > krawedz2.waga) return true;
-		if (krawedz1.waga <= krawedz2.waga) return false;
+		else return false;
 	}
 };
 
@@ -29,7 +29,39 @@ Listowo::~Listowo(){
 	usunGraf();
 }
 
-bool Listowo::utworzGraf(int iloscWierzcholkow){
+uint Listowo::algorytmPrima(){
+	uint sumaWag = 0;
+	bool *odwiedzone = new bool[v];
+	list<krawedz> *tempDrzewoRozp = new list<krawedz>[v];
+	for (uint i = 0; i < v; i++)
+		odwiedzone[i] = false;
+	odwiedzone[v0] = true;
+	uint koniec2, koniec1 = koniec2 = v0;			//koñce drzewa - pocz¹tkowo oba równe s¹ wierzcho³kowi pocz¹tkowemu
+	for (uint licznik = 0; licznik < v - 1; licznik++){
+		TkolejkaKrawedzi kolejka;
+		for (uint i = 0; i < v; i++){
+			for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
+				if (iter->v1 == koniec1 || iter->v1 == koniec2)
+					kolejka.push(*iter);
+		}
+		bool dodanoKrawedz = false;
+		while (!dodanoKrawedz && !kolejka.empty()){ //wykonuj dopóki krawêdŸ nie zostanie dodana i kolejka nie zostanie wyczerpana
+			krawedz tempKraw = kolejka.top();
+			kolejka.pop();
+			if (odwiedzone[tempKraw.v2] == false){
+				tempDrzewoRozp[tempKraw.v1].push_back(tempKraw);
+				sumaWag += tempKraw.waga;
+				koniec2 = tempKraw.v2;
+				odwiedzone[koniec2] = true;
+				dodanoKrawedz = true;
+			}
+		}
+	}
+	wyswietl(MST = tempDrzewoRozp);
+	return sumaWag;
+}
+
+bool Listowo::utworzGraf(uint iloscWierzcholkow){
 	if (pierwszeWczytywanie == false)
 		usunGraf();
 	v = iloscWierzcholkow;
@@ -45,10 +77,12 @@ bool Listowo::utworzGraf(){
 
 bool Listowo::kopiujZMacierzyNieskierowany(Macierzowo *macierz){
 	utworzGraf(macierz->v);
-	for (int i = 0; i < v - 1; i++){ //i: iteracja po wierszu (wierzcho³ku)
-		for (int j = i + 1; j < v; j++){ //j: iteracja po kolumnie (s¹siedzie)
-			if (int waga = macierz->graf[i][j]) //jeœli krawêdŸ istnieje
-				graf[i].push_back(*(new krawedz(j, waga))); //to dodaj j¹ do reprezentacji listowej
+	for (uint i = 0; i < v - 1; i++){ //i: iteracja po wierszu (wierzcho³ku)
+		for (uint j = i + 1; j < v; j++){ //j: iteracja po kolumnie (s¹siedzie)
+			if (uint waga = macierz->graf[i][j]){ //jeœli krawêdŸ istnieje
+				graf[i].push_back(*(new krawedz(i, j, waga))); //to dodaj j¹ do reprezentacji listowej
+				graf[j].push_back(*(new krawedz(j, i, waga)));
+			}
 		}
 	}
 	return true;
@@ -57,27 +91,30 @@ bool Listowo::kopiujZMacierzyNieskierowany(Macierzowo *macierz){
 bool Listowo::kopiujZMacierzySkierowany(Macierzowo *macierz){
 	utworzGraf(macierz->v);
 	v0 = macierz -> v0; //przekopiowanie wierzcho³ka pocz¹tkowego
-	for (int i = 0; i < v; i++){ //i: iteracja po wierszu (wierzcho³ku)
-		for (int j = 0; j < v; j++){ //j: iteracja po kolumnie (s¹siedzie)
-			if (int waga = macierz->graf[i][j]) //jeœli krawêdŸ istnieje
-				graf[i].push_back(*(new krawedz(j, waga))); //to dodaj j¹ do reprezentacji listowej
+	for (uint i = 0; i < v; i++){ //i: iteracja po wierszu (wierzcho³ku)
+		for (uint j = 0; j < v; j++){ //j: iteracja po kolumnie (s¹siedzie)
+			if (uint waga = macierz->graf[i][j]){ //jeœli krawêdŸ istnieje
+				graf[i].push_back(*(new krawedz(i, j, waga))); //to dodaj j¹ do reprezentacji listowej
+				graf[j].push_back(*(new krawedz(j, i, waga)));
+			}
 		}
 	}
 	return true;
 }
 
 bool Listowo::wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki){
-	int wierzcholek, sasiad, waga;
+	uint wierzcholek, sasiad, waga;
 	if (plik = fopen(nazwaPliku, "r")){ //uchwyt s³u¿¹cy jedynie do odczytu, sprawdzenie czy otwarcie pliku siê powiod³o
 		fscanf_s(plik, "%d %d", &e, &v); //wczytujê liczbê krawêdzi i liczbê wierzcho³ków
 		if (dlaProblemuNajkrotszejSciezki)
 			fscanf_s(plik, "%d", &v0); //wczytujê dodatkowo nr wierzcho³ka pocz¹tkowego
 		utworzGraf();
-		for (int i = 0; i < e; i++){
+		for (uint i = 0; i < e; i++){
 			fscanf_s(plik, "%d %d %d", &wierzcholek, &sasiad, &waga);
 			if (wierzcholek >= v || sasiad >= v)
 				return false;
-			graf[wierzcholek].push_back(*(new krawedz(sasiad, waga)));
+			graf[wierzcholek].push_back(*(new krawedz(wierzcholek, sasiad, waga)));
+			graf[sasiad].push_back(*(new krawedz(sasiad, wierzcholek, waga)));
 		}
 		fclose(plik);
 		return true;
@@ -86,19 +123,23 @@ bool Listowo::wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezk
 		return false;
 }
 
-void Listowo::wyswietl(){
-	for (int i = 0; i < v; i++){
+void Listowo::wyswietl(list<krawedz> *grafListowo){
+	for (uint i = 0; i < v; i++){
 		printf("\n%d: ", i);
-		for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
-			printf("(%d, %d), ", iter->sasiad, iter->waga);
+		for (list<krawedz>::iterator iter = grafListowo[i].begin(); iter != grafListowo[i].end(); iter++)
+			printf("(%d, %d), ", iter->v2, iter->waga);
 	}
+}
+
+void Listowo::wyswietl(){
+	wyswietl(graf);
 }
 
 void Listowo::usunGraf(){
 	delete[] graf;
 }
 
-/* ***** FUNKCJE WYCOFANE Z U¯YCIA *****
+/***** FUNKCJE WYCOFANE *****
 
 bool Listowo::generujLosowoNieskierowany(int v, int gestosc){
 	int licznik = 0;
