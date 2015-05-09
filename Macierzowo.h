@@ -1,26 +1,34 @@
 #pragma once
 #include "stdafx.h"
 #include "Listowo.h"
+using namespace std;
+struct krawedz;
+struct porownajWagi;
+typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
+typedef unsigned int uint;
 
 class Macierzowo {
 	friend class Listowo;
 public:
 	Macierzowo();
 	~Macierzowo();
-	bool algorytmPrima(); //////
+	uint algorytmPrima();
 	bool algorytmDijkstry(); //////
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl(); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
-	bool generujLosowoNieskierowany(int v, int gestosc); //gêstoœæ w %
-	bool generujLosowoSkierowany(int v, int gestosc); //gêstoœæ w %
+	bool generujLosowoNieskierowany(uint v, int gestosc); //gêstoœæ w %
+	bool generujLosowoSkierowany(uint v, int gestosc); //gêstoœæ w %
+	uint getV0();
 private:
-	bool utworzGraf(int iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
+	bool utworzGraf(uint iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
 	bool utworzGraf(); //tworzy pusty graf nie zmieniaj¹c obecnej iloœci wierzcho³ków
 	void usunGraf(); //czyœci pamiêæ z nieu¿ywanego ju¿ grafu
+	void wyswietl(uint **macierz);
 	bool pierwszeWczytywanie;
-	unsigned int **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
-	int v; //iloœæ wierzcho³ków
-	int e; //iloœæ krawêdzi
-	int v0; //nr wierzcho³ka pocz¹tkowego
+	uint **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
+	uint **drzewoRozpinajace;
+	uint v; //iloœæ wierzcho³ków
+	uint e; //iloœæ krawêdzi
+	uint v0; //nr wierzcho³ka pocz¹tkowego
 	FILE *plik; //uchwyt I/O
 };

@@ -1,15 +1,13 @@
 #pragma once
 #include "Macierzowo.h"
+
 using namespace std;
 
-class Macierzowo; //deklaracja na potrzebê u¿ycia instancji tej klasy
+class Macierzowo; //deklaracja dla kompilatora ze wzglêdu na potrzebê u¿ycia instancji tej klasy
 
-struct krawedz { //struktura reprezentuj¹ca krawêdŸ, bêdzie u¿ywana w liscie
-	krawedz(unsigned int sas, unsigned int wag){
-		sasiad = sas, waga = wag;
-	}
-	unsigned int sasiad, waga;
-};
+struct krawedz;
+struct porownajWagi;
+typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
 
 class Listowo {
 public:

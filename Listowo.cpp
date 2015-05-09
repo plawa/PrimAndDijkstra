@@ -1,6 +1,25 @@
 #include "stdafx.h"
 #include "Listowo.h"
 
+//Struktura reprezentuj¹ca krawêdŸ, bêdzie u¿ywana w liscie.
+//Jej pocz¹tkowy wierzcho³ek reprezentuje index tablicy pod którym sie znajduje.
+//----------------------------------------------------------------------------
+struct krawedz {
+	krawedz(unsigned int sas, unsigned int wag){
+		sasiad = sas, waga = wag;
+	}
+	unsigned int sasiad, waga;
+};
+
+//Struktura stworzona na potrzeby implementacji kolejki priorytetowej.
+//Odpowiada za rosn¹ce sortowanie krawêdzi w kolejce po wagach.
+//---------------------------------------------------------------------------
+struct porownajWagi {
+	bool operator() (const krawedz &krawedz1, const krawedz &krawedz2){
+		if (krawedz1.waga > krawedz2.waga) return true;
+		if (krawedz1.waga <= krawedz2.waga) return false;
+	}
+};
 
 Listowo::Listowo(){
 	pierwszeWczytywanie = true;

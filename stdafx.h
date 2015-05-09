@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include <time.h>
 #include <list>
+#include <queue>
 
 #include "PomiarCzasu.h"
 // TODO: reference additional headers your program requires here
