@@ -2,7 +2,7 @@
 #include "Macierzowo.h"
 #include <math.h>
 
-#define NIESKONCZONOSC 4294967295
+
 
 //Struktura reprezentuj¹ca krawêdŸ, bêdzie u¿ywana w liscie.
 //Jej pocz¹tkowy wierzcho³ek reprezentuje index tablicy pod którym sie znajduje.
@@ -22,28 +22,14 @@ struct porownajWagi {
 	}
 };
 
-struct wierzch {
-	wierzch(uint poprzednik, uint nrWierzcholka, uint odlegloscOdZrodla){
-		poprz = poprzednik, v = nrWierzcholka, odleglosc = odlegloscOdZrodla;
-	}
-	uint poprz, v, odleglosc;
-};
 
-//Struktura stworzona na potrzeby implementacji kolejki priorytetowej dla alg Dijkstry.
-//Odpowiada za rosn¹ce sortowanie wierzcho³ków w kolejce po odleg³oœciach od Ÿród³a.
-//---------------------------------------------------------------------------
-struct porownajOdleglosci{
-	bool operator() (const wierzch &wierzch1, const wierzch &wierzch2){
-		if (wierzch1.odleglosc > wierzch2.odleglosc) return true;
-		else return false;
-	}
-};
 
 //Konstruktor, który resetuje generator liczb pseudolowych i zapewnia, ¿e pierwsze
 //wczytanie grafu przebiegnie bez próby usuwania poprzedniej (nieistniej¹cej) instancji.
 //---------------------------------------------------------------------------
 Macierzowo::Macierzowo(){
 	pierwszeWczytywanie = true;
+	istniejeMST = false;
 	srand((size_t)time(NULL)); //na potrzeby u¿ywania funkcji rand()
 }
 
@@ -57,6 +43,8 @@ Macierzowo::~Macierzowo(){
 // TYLKO DLA PROBLEMU NR 1
 //--------------------------------------------------------------------------
 uint Macierzowo::algorytmPrima(){
+	if (pierwszeWczytywanie)
+		return false;
 	uint sumaWag = 0;
 	bool *odwiedzone = new bool[v];
 	uint **tempDrzewoRozp = new uint*[v];
@@ -93,7 +81,11 @@ uint Macierzowo::algorytmPrima(){
 			}
 		}
 	}
-	wyswietl(drzewoRozpinajace = tempDrzewoRozp); //przypisz i wyswietl
+	if(istniejeMST)
+		usun(drzewoRozpinajace);						//czyszczenie po poprzednim drzewie
+	wyswietl(drzewoRozpinajace = tempDrzewoRozp);	//przypisz i wyswietl
+	istniejeMST = true;
+	delete[] odwiedzone;
 	return sumaWag;
 }
 
@@ -103,9 +95,8 @@ uint Macierzowo::algorytmPrima(){
 //---------------------------------------------------------------
 bool Macierzowo::algorytmDijkstry(){
 	//******* DANE *********
-	v0;											//wierzcho³ek startowy
 	uint *odleglosc = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
-	uint *poprzednik = new uint[v];			//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
+	uint *poprzednik = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
 	bool *maPoliczonaOdleglosc = new bool[v];	//tablica która mówi czy dany wierzcho³ek ma ju¿ policzon¹ najkrót. œcie¿kê od v0
 
 	//inicjalizacja danych
@@ -116,7 +107,9 @@ bool Macierzowo::algorytmDijkstry(){
 	}
 	odleglosc[v0] = 0;							//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
 	//-----------------------------------------
-	while (!wszystkieTrue(maPoliczonaOdleglosc)){
+	// ************ PÊTLA G£OWNA *************
+	//-----------------------------------------
+	for (uint i = 0; i < v; i++){
 		uint idxMinimum = zwrocIdxMinimum(odleglosc, maPoliczonaOdleglosc); //zwraca index wierzcho³ka o minimalnej odleglosci
 		maPoliczonaOdleglosc[idxMinimum] = true;							//przenosi do zbioru wierzch o policzonej odleg³oœci
 		for (uint i = 0; i < v; i++)										//iteracja po ka¿dym z mo¿liwyuch s¹siadów
@@ -126,28 +119,28 @@ bool Macierzowo::algorytmDijkstry(){
 					poprzednik[i] = idxMinimum;
 				}
 	}
+	delete[] maPoliczonaOdleglosc;
 
+	//wyswietlanie
+	printf("index:  ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", i);
+	printf("\nodl(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", odleglosc[i]);
+	printf("\npop(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", poprzednik[i]);
 	return true;
 }
 
-uint Macierzowo::zwrocIdxMinimum(uint *tablica, bool *limiter){
-	uint minimum;
+uint Macierzowo::zwrocIdxMinimum(uint *odleglosci, bool *limiter){
+	uint minimum = v;
 	for (uint i = 0; i < v; i++)
-		if (!limiter[i]){
-			minimum = i;
-			break;
-		}
-	for (uint i = 0; i < v; i++)
-		if( ! limiter[i])		//szukamy w zbiorze Q
-			if (tablica[i] < minimum)
+		if( ! limiter[i])		//poniewa¿ szukamy w zbiorze wierzcho³ków dla których odleg³oœæ nie zosta³a jeszcze obliczona
+			if (odleglosci[i] < odleglosci[minimum])
 				minimum = i;
 	return minimum;
-}
-
-bool Macierzowo::wszystkieTrue(bool *tablica){
-	for (uint i = 0; i < v; i++)
-		if (tablica[i] == false) return false;
-	return true;
 }
 
 bool Macierzowo::utworzGraf(uint iloscWierzcholkow){
@@ -203,6 +196,7 @@ bool Macierzowo::generujLosowoNieskierowany(uint v, int gestosc){
 			licznik++;
 		}
 	}
+	usun(zmodyfikowane);
 	return true;
 }
 
@@ -256,9 +250,19 @@ void Macierzowo::wyswietl(){
 }
 
 void Macierzowo::usunGraf(){
+	usun(graf);
+}
+
+void Macierzowo::usun(uint **macierz){
 	for (uint i = 0; i < v; i++)
-		delete[] graf[i];
-	delete[] graf;
+		delete[] macierz[i];
+	delete[] macierz;
+}
+
+void Macierzowo::usun(bool **macierz){
+	for (uint i = 0; i < v; i++)
+		delete[] macierz[i];
+	delete[] macierz;
 }
 
 bool Macierzowo::wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki){
@@ -286,3 +290,10 @@ bool Macierzowo::wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrots
 uint Macierzowo::getV0(){
 	return v0;
 }
+
+
+	//bool Macierzowo::wszystkieTrue(bool *tablica){
+	//	for (uint i = 0; i < v; i++)
+	//		if (tablica[i] == false) return false;
+	//	return true;
+	//}

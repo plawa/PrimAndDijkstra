@@ -10,7 +10,6 @@ struct krawedz {
 	}
 	uint v1, v2, waga;
 };
-
 //Struktura stworzona na potrzeby implementacji kolejki priorytetowej.
 //Odpowiada za rosn¹ce sortowanie krawêdzi w kolejce po wagach.
 //---------------------------------------------------------------------------
@@ -30,6 +29,8 @@ Listowo::~Listowo(){
 }
 
 uint Listowo::algorytmPrima(){
+	if (pierwszeWczytywanie)
+		return false;
 	uint sumaWag = 0;
 	bool *odwiedzone = new bool[v];
 	list<krawedz> *tempDrzewoRozp = new list<krawedz>[v];
@@ -62,7 +63,32 @@ uint Listowo::algorytmPrima(){
 }
 
 bool Listowo::algorytmDijkstry(){
-	return false;
+	TkolejkaKrawedzi kolejka;
+	TkolejkaKrawedzi odleglosci;
+	//uint *odleglosc = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
+	uint *poprzednik = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
+	bool *maPoliczonaOdleglosc = new bool[v];	//tablica która mówi czy dany wierzcho³ek ma ju¿ policzon¹ najkrót. œcie¿kê od v0
+
+	//inicjalizacja danych
+	for (uint i = 0; i < v; i++){
+		maPoliczonaOdleglosc[i] = false;		//na pocz¹tku ¿aden wierzch nie ma pol. odleg³oœci
+		poprzednik[i] = 0;						//brak danych o poprzednikach na starcie
+		//odleglosc[i] = NIESKONCZONOSC;			//odleg³oœci na pocz¹tku s¹ równe nieskonczonoœæ
+		for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
+			kolejka.push(*iter);				//budowanie kolejki priorytetowej z wszystkimi krawêdziami
+	}
+	//odleglosc[v0] = 0;							//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
+	//-----------------------------------------
+	// ************ PÊTLA G£OWNA *************
+	//-----------------------------------------
+	while (!kolejka.empty()){
+		krawedz tempKraw = kolejka.top();
+		kolejka.pop();
+		if ()
+
+	}
+
+
 }
 
 bool Listowo::utworzGraf(uint iloscWierzcholkow){

@@ -1,6 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "Listowo.h"
+
+#define NIESKONCZONOSC 4294967295
+
 using namespace std;
 
 struct krawedz;
@@ -8,7 +11,6 @@ struct porownajWagi;
 struct wierzch;
 struct porownajOdleglosci;
 typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
-typedef priority_queue<wierzch, vector<wierzch>, porownajOdleglosci> TkolejkaWierzch; //dla Dijkstry
 typedef unsigned int uint;
 
 class Macierzowo {
@@ -27,10 +29,12 @@ private:
 	bool utworzGraf(uint iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
 	bool utworzGraf(); //tworzy pusty graf nie zmieniaj¹c obecnej iloœci wierzcho³ków
 	void usunGraf(); //czyœci pamiêæ z nieu¿ywanego ju¿ grafu
+	void usun(uint **macierz);
+	void usun(bool **macierz);
 	void wyswietl(uint **macierz);
 	uint zwrocIdxMinimum(uint *tablica, bool *limiter);
-	bool wszystkieTrue(bool *tablica);
 	bool pierwszeWczytywanie;
+	bool istniejeMST;
 	uint **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
 	uint **drzewoRozpinajace;
 	uint v; //iloœæ wierzcho³ków

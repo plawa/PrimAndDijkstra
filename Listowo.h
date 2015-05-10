@@ -1,6 +1,8 @@
 #pragma once
 #include "Macierzowo.h"
 
+#define NIESKONCZONOSC 4294967295
+
 using namespace std;
 
 class Macierzowo; //deklaracja dla kompilatora ze wzglêdu na potrzebê u¿ycia instancji tej klasy
@@ -17,7 +19,7 @@ public:
 	bool wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl();
 	uint algorytmPrima();
-	bool algorytmDijkstry(); ///////
+	bool algorytmDijkstry();
 	bool kopiujZMacierzyNieskierowany(Macierzowo *macierz);
 	bool kopiujZMacierzySkierowany(Macierzowo *macierz);
 private:
