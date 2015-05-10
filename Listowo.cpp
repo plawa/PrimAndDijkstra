@@ -61,6 +61,10 @@ uint Listowo::algorytmPrima(){
 	return sumaWag;
 }
 
+bool Listowo::algorytmDijkstry(){
+	return false;
+}
+
 bool Listowo::utworzGraf(uint iloscWierzcholkow){
 	if (pierwszeWczytywanie == false)
 		usunGraf();
