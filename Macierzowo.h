@@ -18,13 +18,14 @@ class Macierzowo {
 public:
 	Macierzowo();
 	~Macierzowo();
-	uint algorytmPrima();
+	bool algorytmPrima();
 	bool algorytmDijkstry();
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl(); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
 	bool generujLosowoNieskierowany(uint v, int gestosc); //gêstoœæ w %
 	bool generujLosowoSkierowany(uint v, int gestosc); //gêstoœæ w %
 	uint getV0();
+	void wyswietlPrima();
 	void wyswietlDijkstry();
 private:
 	bool utworzGraf(uint iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
@@ -38,6 +39,7 @@ private:
 	bool istniejeMST;
 	uint **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
 	uint **drzewoRozpinajace;
+	uint sumaWagMST;
 	uint *tabPoprzednikow; //dla Dijkstry
 	uint *tabOdleglosci; //dla Dijkstry
 	uint v; //iloœæ wierzcho³ków

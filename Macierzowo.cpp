@@ -42,9 +42,10 @@ Macierzowo::~Macierzowo(){
 //Znajduje najkrótsze drzewo rozpinaj¹ce w grafie reprez. przez macierz.
 // TYLKO DLA PROBLEMU NR 1
 //--------------------------------------------------------------------------
-uint Macierzowo::algorytmPrima(){
+bool Macierzowo::algorytmPrima(){
 	if (pierwszeWczytywanie)
 		return false;
+	// ***** DANE ******
 	uint sumaWag = 0;
 	bool *odwiedzone = new bool[v];
 	uint **tempDrzewoRozp = new uint*[v];
@@ -81,12 +82,17 @@ uint Macierzowo::algorytmPrima(){
 			}
 		}
 	}
-	if(istniejeMST)
-		usun(drzewoRozpinajace);						//czyszczenie po poprzednim drzewie
-	wyswietl(drzewoRozpinajace = tempDrzewoRozp);	//przypisz i wyswietl
+	drzewoRozpinajace = tempDrzewoRozp;
+	sumaWagMST = sumaWag;
 	istniejeMST = true;
 	delete[] odwiedzone;
-	return sumaWag;
+	return true;
+}
+
+void Macierzowo::wyswietlPrima(){
+	//wyœwietla, po czym usuwa z pamieci drzewa MST
+	wyswietl(drzewoRozpinajace);
+	usun(drzewoRozpinajace);
 }
 
 
@@ -124,7 +130,7 @@ bool Macierzowo::algorytmDijkstry(){
 }
 
 uint Macierzowo::zwrocIdxMinimum(uint *odleglosci, bool *limiter){
-	uint minimum = v;
+	uint minimum = v-1;
 	for (uint i = 0; i < v; i++)
 		if( ! limiter[i])		//poniewa¿ szukamy w zbiorze wierzcho³ków dla których odleg³oœæ nie zosta³a jeszcze obliczona
 			if (odleglosci[i] < odleglosci[minimum])
@@ -295,10 +301,3 @@ bool Macierzowo::wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrots
 uint Macierzowo::getV0(){
 	return v0;
 }
-
-
-	//bool Macierzowo::wszystkieTrue(bool *tablica){
-	//	for (uint i = 0; i < v; i++)
-	//		if (tablica[i] == false) return false;
-	//	return true;
-	//}

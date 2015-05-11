@@ -41,7 +41,7 @@ Listowo::~Listowo(){
 	usunGraf();
 }
 
-uint Listowo::algorytmPrima(){
+bool Listowo::algorytmPrima(){
 	if (pierwszeWczytywanie)
 		return false;
 	uint sumaWag = 0;
@@ -71,41 +71,72 @@ uint Listowo::algorytmPrima(){
 			}
 		}
 	}
-	wyswietl(MST = tempDrzewoRozp);
-	return sumaWag;
+	MST = tempDrzewoRozp;
+	sumaWagMST = sumaWag;
+	return true;
+}
+
+void Listowo::wyswietlPrima(){
+	wyswietl(MST);
+	printf("\n\nWierzcholek poczatkowy: %d\nSuma wag: %d\n", v0, sumaWagMST);
 }
 
 bool Listowo::algorytmDijkstry(){
-	list<wierzcholek> gotowaKolejka;
-	TkolejkaWierzch odleglosci;
-	//uint *odleglosc = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
-	uint *poprzednik = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
+	if (pierwszeWczytywanie)
+		return false;
+	//******* DANE *********
+	tabOdleglosci = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
+	tabPoprzednikow = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
 	bool *maPoliczonaOdleglosc = new bool[v];	//tablica która mówi czy dany wierzcho³ek ma ju¿ policzon¹ najkrót. œcie¿kê od v0
 
 	//inicjalizacja danych
 	for (uint i = 0; i < v; i++){
 		maPoliczonaOdleglosc[i] = false;		//na pocz¹tku ¿aden wierzch nie ma pol. odleg³oœci
-		poprzednik[i] = 0;						//brak danych o poprzednikach na starcie
-		//budowanie kolejki priorytetowej z wszystkimi krawêdziami
-		if (i == v0)
-			gotowaKolejka.push_back(*(new wierzcholek(i, 0, 0)));
-		else
-			gotowaKolejka.push_back(*(new wierzcholek(i, NIESKONCZONOSC, 0)));
-		odleglosci.push(gotowaKolejka.back());
+		tabPoprzednikow[i] = 0;					//brak danych o poprzednikach na starcie
+		tabOdleglosci[i] = NIESKONCZONOSC;		//odleg³oœci na pocz¹tku s¹ równe nieskonczonoœæ
 	}
+	tabOdleglosci[v0] = 0;						//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
 	//-----------------------------------------
 	// ************ PÊTLA G£OWNA *************
 	//-----------------------------------------
-	while (!odleglosci.empty()){
-		wierzcholek wierzMinimum = odleglosci.top(); //zwraca nr wierzcho³ka o najmniejszej odleg³oœci
-		odleglosci.pop();
-		//teraz iteracja po ka¿dym z mo¿liwych s¹siadów uzyskanego, o minimalnej odleg³oœci, wierzcho³ka:
-		for (list<wierzcholek>::iterator iter = gotowaKolejka.begin(); iter != gotowaKolejka.end(); iter++)
-			if (iter->v == wierzMinimum.v)
-				if (iter->d > wierzMinimum.d + graf[iter->v].)
+	for (uint i = 0; i < v; i++){
+		uint idxMinimum = zwrocIdxMinimum(tabOdleglosci, maPoliczonaOdleglosc); //zwraca index wierzcho³ka o minimalnej odleglosci
+		maPoliczonaOdleglosc[idxMinimum] = true;								//przenosi do zbioru wierzch o policzonej odleg³oœci
+		for (uint i = 0; i < graf[idxMinimum].size(); i++){						//iteracja po ka¿dym z mo¿liwyuch s¹siadów
+			for (list<krawedz>::iterator iter = graf[idxMinimum].begin(); iter != graf[idxMinimum].end(); iter++){
+				if (tabOdleglosci[iter->v2] > tabOdleglosci[idxMinimum] + iter->waga){
+					tabOdleglosci[iter->v2] = tabOdleglosci[idxMinimum] + iter->waga;
+					tabPoprzednikow[iter->v2] = idxMinimum;
+				}
+			}
+		}
 	}
+	delete[] maPoliczonaOdleglosc;
+	return true;
+}
 
-	return false;
+uint Listowo::zwrocIdxMinimum(uint *tabOdleglosci, bool *limiter){
+	uint minimum = v-1;
+	for (uint i = 0; i < v; i++)
+		if (!limiter[i])		//poniewa¿ szukamy w zbiorze wierzcho³ków dla których odleg³oœæ nie zosta³a jeszcze obliczona
+			if (tabOdleglosci[i] < tabOdleglosci[minimum])
+				minimum = i;
+	return minimum;
+}
+
+void Listowo::wyswietlDijkstry(){
+	printf("index:  ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", i);
+	printf("\nodl(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", tabOdleglosci[i]);
+	printf("\npop(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", tabPoprzednikow[i]);
+	printf("\n\nWierzcholek poczatkowy: %d", v0);
+	delete[] tabOdleglosci;
+	delete[] tabPoprzednikow;
 }
 
 bool Listowo::utworzGraf(uint iloscWierzcholkow){
@@ -161,7 +192,8 @@ bool Listowo::wczytajZPliku(char nazwaPliku[], bool dlaProblemuNajkrotszejSciezk
 			if (wierzcholek >= v || sasiad >= v)
 				return false;
 			graf[wierzcholek].push_back(*(new krawedz(wierzcholek, sasiad, waga)));
-			graf[sasiad].push_back(*(new krawedz(sasiad, wierzcholek, waga)));
+			if (!dlaProblemuNajkrotszejSciezki)
+				graf[sasiad].push_back(*(new krawedz(sasiad, wierzcholek, waga)));
 		}
 		fclose(plik);
 		return true;
