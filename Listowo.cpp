@@ -20,6 +20,19 @@ struct porownajWagi {
 	}
 };
 
+struct wierzcholek {
+	wierzcholek(uint nrWierzcholka, uint odleglosc, uint poprzednik){
+		v = nrWierzcholka, d = odleglosc, p = poprzednik;
+	}
+	uint v, d, p;
+};
+struct porownajOdleglosci {
+	bool operator() (const wierzcholek &v1, const wierzcholek &v2){
+		if (v1.d > v2.d) return true;
+		else return false;
+	}
+};
+
 Listowo::Listowo(){
 	pierwszeWczytywanie = true;
 	srand((size_t)time(NULL)); //na potrzeby u¿ywania funkcji rand()
@@ -63,8 +76,8 @@ uint Listowo::algorytmPrima(){
 }
 
 bool Listowo::algorytmDijkstry(){
-	TkolejkaKrawedzi kolejka;
-	TkolejkaKrawedzi odleglosci;
+	list<wierzcholek> gotowaKolejka;
+	TkolejkaWierzch odleglosci;
 	//uint *odleglosc = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
 	uint *poprzednik = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
 	bool *maPoliczonaOdleglosc = new bool[v];	//tablica która mówi czy dany wierzcho³ek ma ju¿ policzon¹ najkrót. œcie¿kê od v0
@@ -73,22 +86,26 @@ bool Listowo::algorytmDijkstry(){
 	for (uint i = 0; i < v; i++){
 		maPoliczonaOdleglosc[i] = false;		//na pocz¹tku ¿aden wierzch nie ma pol. odleg³oœci
 		poprzednik[i] = 0;						//brak danych o poprzednikach na starcie
-		//odleglosc[i] = NIESKONCZONOSC;			//odleg³oœci na pocz¹tku s¹ równe nieskonczonoœæ
-		for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
-			kolejka.push(*iter);				//budowanie kolejki priorytetowej z wszystkimi krawêdziami
+		//budowanie kolejki priorytetowej z wszystkimi krawêdziami
+		if (i == v0)
+			gotowaKolejka.push_back(*(new wierzcholek(i, 0, 0)));
+		else
+			gotowaKolejka.push_back(*(new wierzcholek(i, NIESKONCZONOSC, 0)));
+		odleglosci.push(gotowaKolejka.back());
 	}
-	//odleglosc[v0] = 0;							//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
 	//-----------------------------------------
 	// ************ PÊTLA G£OWNA *************
 	//-----------------------------------------
-	while (!kolejka.empty()){
-		krawedz tempKraw = kolejka.top();
-		kolejka.pop();
-		if ()
-
+	while (!odleglosci.empty()){
+		wierzcholek wierzMinimum = odleglosci.top(); //zwraca nr wierzcho³ka o najmniejszej odleg³oœci
+		odleglosci.pop();
+		//teraz iteracja po ka¿dym z mo¿liwych s¹siadów uzyskanego, o minimalnej odleg³oœci, wierzcho³ka:
+		for (list<wierzcholek>::iterator iter = gotowaKolejka.begin(); iter != gotowaKolejka.end(); iter++)
+			if (iter->v == wierzMinimum.v)
+				if (iter->d > wierzMinimum.d + graf[iter->v].)
 	}
 
-
+	return false;
 }
 
 bool Listowo::utworzGraf(uint iloscWierzcholkow){

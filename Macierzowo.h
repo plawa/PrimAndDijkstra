@@ -19,12 +19,13 @@ public:
 	Macierzowo();
 	~Macierzowo();
 	uint algorytmPrima();
-	bool algorytmDijkstry(); //////
+	bool algorytmDijkstry();
 	bool wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrotszejSciezki = false);
 	void wyswietl(); //wyœwietla graf w postaci macierzy s¹siedztwa na ekranie
 	bool generujLosowoNieskierowany(uint v, int gestosc); //gêstoœæ w %
 	bool generujLosowoSkierowany(uint v, int gestosc); //gêstoœæ w %
 	uint getV0();
+	void wyswietlDijkstry();
 private:
 	bool utworzGraf(uint iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
 	bool utworzGraf(); //tworzy pusty graf nie zmieniaj¹c obecnej iloœci wierzcho³ków
@@ -37,6 +38,8 @@ private:
 	bool istniejeMST;
 	uint **graf; //nr wiersza/nr kolumny - macierz s¹siedztwa grafu
 	uint **drzewoRozpinajace;
+	uint *tabPoprzednikow; //dla Dijkstry
+	uint *tabOdleglosci; //dla Dijkstry
 	uint v; //iloœæ wierzcho³ków
 	uint e; //iloœæ krawêdzi
 	uint v0; //nr wierzcho³ka pocz¹tkowego

@@ -95,42 +95,31 @@ uint Macierzowo::algorytmPrima(){
 //---------------------------------------------------------------
 bool Macierzowo::algorytmDijkstry(){
 	//******* DANE *********
-	uint *odleglosc = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
-	uint *poprzednik = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
+	tabOdleglosci = new uint[v];				//tablica najkrótszych odleg³oœci ka¿dego wierzcho³ka od Ÿród³a (v0)
+	tabPoprzednikow = new uint[v];				//tablica poprzedników dla ka¿dego z wierzch. na jego najkrótszej œcie¿ce
 	bool *maPoliczonaOdleglosc = new bool[v];	//tablica która mówi czy dany wierzcho³ek ma ju¿ policzon¹ najkrót. œcie¿kê od v0
 
 	//inicjalizacja danych
 	for (uint i = 0; i < v; i++){
 		maPoliczonaOdleglosc[i] = false;		//na pocz¹tku ¿aden wierzch nie ma pol. odleg³oœci
-		poprzednik[i] = 0;						//brak danych o poprzednikach na starcie
-		odleglosc[i] = NIESKONCZONOSC;			//odleg³oœci na pocz¹tku s¹ równe nieskonczonoœæ
+		tabPoprzednikow[i] = 0;						//brak danych o poprzednikach na starcie
+		tabOdleglosci[i] = NIESKONCZONOSC;			//odleg³oœci na pocz¹tku s¹ równe nieskonczonoœæ
 	}
-	odleglosc[v0] = 0;							//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
+	tabOdleglosci[v0] = 0;							//bo koszt dojœcia od Ÿród³a do Ÿród³a = 0
 	//-----------------------------------------
 	// ************ PÊTLA G£OWNA *************
 	//-----------------------------------------
 	for (uint i = 0; i < v; i++){
-		uint idxMinimum = zwrocIdxMinimum(odleglosc, maPoliczonaOdleglosc); //zwraca index wierzcho³ka o minimalnej odleglosci
+		uint idxMinimum = zwrocIdxMinimum(tabOdleglosci, maPoliczonaOdleglosc); //zwraca index wierzcho³ka o minimalnej odleglosci
 		maPoliczonaOdleglosc[idxMinimum] = true;							//przenosi do zbioru wierzch o policzonej odleg³oœci
 		for (uint i = 0; i < v; i++)										//iteracja po ka¿dym z mo¿liwyuch s¹siadów
 			if (uint waga = graf[idxMinimum][i])							//jeœli pod danym indexem istnieje krawêdŸ:
-				if (odleglosc[i] > odleglosc[idxMinimum] + waga){
-					odleglosc[i] = odleglosc[idxMinimum] + waga;			//to zmodyfikuj odpowiednio
-					poprzednik[i] = idxMinimum;
+				if (tabOdleglosci[i] > tabOdleglosci[idxMinimum] + waga){
+					tabOdleglosci[i] = tabOdleglosci[idxMinimum] + waga;			//to zmodyfikuj odpowiednio
+					tabPoprzednikow[i] = idxMinimum;
 				}
 	}
 	delete[] maPoliczonaOdleglosc;
-
-	//wyswietlanie
-	printf("index:  ");
-	for (uint i = 0; i < v; i++)
-		printf("%d ", i);
-	printf("\nodl(i): ");
-	for (uint i = 0; i < v; i++)
-		printf("%d ", odleglosc[i]);
-	printf("\npop(i): ");
-	for (uint i = 0; i < v; i++)
-		printf("%d ", poprzednik[i]);
 	return true;
 }
 
@@ -142,6 +131,22 @@ uint Macierzowo::zwrocIdxMinimum(uint *odleglosci, bool *limiter){
 				minimum = i;
 	return minimum;
 }
+
+void Macierzowo::wyswietlDijkstry(){
+	printf("index:  ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", i);
+	printf("\nodl(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", tabOdleglosci[i]);
+	printf("\npop(i): ");
+	for (uint i = 0; i < v; i++)
+		printf("%d ", tabPoprzednikow[i]);
+
+	delete[] tabOdleglosci;
+	delete[] tabPoprzednikow;
+}
+
 
 bool Macierzowo::utworzGraf(uint iloscWierzcholkow){
 	if (pierwszeWczytywanie == false)	//jeœli graf tworzony jest niepierwszy raz w obecnym obiekcie

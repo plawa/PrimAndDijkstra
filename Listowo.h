@@ -8,8 +8,11 @@ using namespace std;
 class Macierzowo; //deklaracja dla kompilatora ze wzglêdu na potrzebê u¿ycia instancji tej klasy
 
 struct krawedz;
+struct wierzcholek;
 struct porownajWagi;
+struct porownajOdleglosci;
 typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
+typedef priority_queue<wierzcholek, vector<wierzcholek>, porownajOdleglosci> TkolejkaWierzch;
 typedef unsigned int uint;
 
 class Listowo {
