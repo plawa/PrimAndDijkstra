@@ -20,18 +20,6 @@ struct porownajWagi {
 	}
 };
 
-struct wierzcholek {
-	wierzcholek(uint nrWierzcholka, uint odleglosc, uint poprzednik){
-		v = nrWierzcholka, d = odleglosc, p = poprzednik;
-	}
-	uint v, d, p;
-};
-struct porownajOdleglosci {
-	bool operator() (const wierzcholek &v1, const wierzcholek &v2){
-		if (v1.d > v2.d) return true;
-		else return false;
-	}
-};
 
 Listowo::Listowo(){
 	pierwszeWczytywanie = true;
@@ -50,12 +38,11 @@ bool Listowo::algorytmPrima(){
 	for (uint i = 0; i < v; i++)
 		odwiedzone[i] = false;
 	odwiedzone[v0] = true;
-	uint koniec2, koniec1 = koniec2 = v0;			//koñce drzewa - pocz¹tkowo oba równe s¹ wierzcho³kowi pocz¹tkowemu
 	for (uint licznik = 0; licznik < v - 1; licznik++){
 		TkolejkaKrawedzi kolejka;
 		for (uint i = 0; i < v; i++){
-			for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
-				if (iter->v1 == koniec1 || iter->v1 == koniec2)
+			if (odwiedzone[i])
+				for (list<krawedz>::iterator iter = graf[i].begin(); iter != graf[i].end(); iter++)
 					kolejka.push(*iter);
 		}
 		bool dodanoKrawedz = false;
@@ -65,8 +52,7 @@ bool Listowo::algorytmPrima(){
 			if (odwiedzone[tempKraw.v2] == false){
 				tempDrzewoRozp[tempKraw.v1].push_back(tempKraw);
 				sumaWag += tempKraw.waga;
-				koniec2 = tempKraw.v2;
-				odwiedzone[koniec2] = true;
+				odwiedzone[tempKraw.v2] = true;
 				dodanoKrawedz = true;
 			}
 		}
@@ -79,6 +65,7 @@ bool Listowo::algorytmPrima(){
 void Listowo::wyswietlPrima(){
 	wyswietl(MST);
 	printf("\n\nWierzcholek poczatkowy: %d\nSuma wag: %d\n", v0, sumaWagMST);
+	czyscPrima();
 }
 
 bool Listowo::algorytmDijkstry(){
@@ -116,7 +103,7 @@ bool Listowo::algorytmDijkstry(){
 }
 
 uint Listowo::zwrocIdxMinimum(uint *tabOdleglosci, bool *limiter){
-	uint minimum = v-1;
+	uint minimum = v;
 	for (uint i = 0; i < v; i++)
 		if (!limiter[i])		//poniewa¿ szukamy w zbiorze wierzcho³ków dla których odleg³oœæ nie zosta³a jeszcze obliczona
 			if (tabOdleglosci[i] < tabOdleglosci[minimum])
@@ -125,18 +112,13 @@ uint Listowo::zwrocIdxMinimum(uint *tabOdleglosci, bool *limiter){
 }
 
 void Listowo::wyswietlDijkstry(){
-	printf("index:  ");
+	printf("wierzch.:  ");
 	for (uint i = 0; i < v; i++)
 		printf("%d ", i);
-	printf("\nodl(i): ");
+	printf("\nodleglosc: ");
 	for (uint i = 0; i < v; i++)
 		printf("%d ", tabOdleglosci[i]);
-	printf("\npop(i): ");
-	for (uint i = 0; i < v; i++)
-		printf("%d ", tabPoprzednikow[i]);
-	printf("\n\nWierzcholek poczatkowy: %d", v0);
-	delete[] tabOdleglosci;
-	delete[] tabPoprzednikow;
+	czyscDijkstry();
 }
 
 bool Listowo::utworzGraf(uint iloscWierzcholkow){
@@ -218,36 +200,11 @@ void Listowo::usunGraf(){
 	delete[] graf;
 }
 
-/***** FUNKCJE WYCOFANE *****
-
-bool Listowo::generujLosowoNieskierowany(int v, int gestosc){
-	int licznik = 0;
-	int minProcent = static_cast<int>(ceil(static_cast<float>(200 / v))); //min procent krawêdzi, aby graf by³ spójny
-	int maxE = v*(v - 1) / 2; //max iloœæ krawêdzi dla grafu nieskierowanego
-	e = (int)floor((float)(maxE * gestosc / 100)); //iloœæ krawêdzi do dodania wyliczona na podstawie gêstoœci
-	if (gestosc < minProcent || gestosc > 100)
-		return false;
-	utworzGraf(v);
-	for (int i = 0; i < v - 1; i++){ //najpierw inicjalizacja grafu (zapewnienie spójnoœci)
-		//³¹czê wierzcho³ki (1->2->3->4 ...), tworz¹c najpierw graf spójny z wagami 1 do 9
-		graf[i].push_back(*(new krawedz(i + 1, rand() % 9 + 1)));
-		licznik++;
-	}
-	while (licznik < e){
-		bool istniejeTakaKrawedz = false;
-		unsigned int wierzcholek = rand() % v;
-		unsigned int sasiad = rand() % v;
-		if (wierzcholek == sasiad) //zakaz tworzenia pêtli
-			continue;
-		unsigned int waga = rand() % 9 + 1;
-		for (list<krawedz>::iterator iter = graf[wierzcholek].begin(); iter != graf[wierzcholek].end(); iter++)
-			if (iter->sasiad == sasiad)
-				istniejeTakaKrawedz = true;
-		if (istniejeTakaKrawedz == false){
-			graf[wierzcholek].push_back(*(new krawedz(sasiad, waga)));
-			licznik++;
-		}
-	}
-	return true;
+void Listowo::czyscDijkstry(){
+	delete[] tabOdleglosci;
+	delete[] tabPoprzednikow;
 }
-*/
+
+void Listowo::czyscPrima(){
+	delete[] MST;
+}

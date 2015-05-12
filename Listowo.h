@@ -1,18 +1,14 @@
 #pragma once
 #include "Macierzowo.h"
-
-#define NIESKONCZONOSC 4294967295
-
 using namespace std;
+
+#define NIESKONCZONOSC 4294967295 //max zakres dla unsigned int
 
 class Macierzowo; //deklaracja dla kompilatora ze wzglêdu na potrzebê u¿ycia instancji tej klasy
 
 struct krawedz;
-struct wierzcholek;
 struct porownajWagi;
-struct porownajOdleglosci;
-typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
-typedef priority_queue<wierzcholek, vector<wierzcholek>, porownajOdleglosci> TkolejkaWierzch;
+typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //kolejka priorytetowa, sortuj¹ca krawêdzie rosn¹co po wagach
 typedef unsigned int uint;
 
 class Listowo {
@@ -27,6 +23,8 @@ public:
 	bool kopiujZMacierzySkierowany(Macierzowo *macierz);
 	void wyswietlDijkstry();
 	void wyswietlPrima();
+	void czyscDijkstry();
+	void czyscPrima();
 private:
 	bool utworzGraf(uint iloscWierzcholkow);
 	bool utworzGraf();

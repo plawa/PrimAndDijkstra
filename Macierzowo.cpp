@@ -3,7 +3,6 @@
 #include <math.h>
 
 
-
 //Struktura reprezentuj¹ca krawêdŸ, bêdzie u¿ywana w liscie.
 //Jej pocz¹tkowy wierzcho³ek reprezentuje index tablicy pod którym sie znajduje.
 //----------------------------------------------------------------------------
@@ -21,7 +20,6 @@ struct porownajWagi {
 		else return false;
 	}
 };
-
 
 
 //Konstruktor, który resetuje generator liczb pseudolowych i zapewnia, ¿e pierwsze
@@ -57,17 +55,16 @@ bool Macierzowo::algorytmPrima(){
 			tempDrzewoRozp[i][j] = 0;
 	}
 	odwiedzone[v0] = true;							//wierzcho³ek pocz¹tkowy oznaczam jako odwiedzony
-	uint koniec2, koniec1 = koniec2 = v0;			//koñce drzewa - pocz¹tkowo oba równe s¹ wierzcho³kowi pocz¹tkowemu
 	// ----- PÊTLA G£OWNA ------
 	for (uint licznik = 0; licznik < v - 1; licznik++){ //krawêdzi bêdzie o 1 mniej ni¿ jest wierzcho³ków
-		//budowanie kolejki wierzcho³ków osi¹galnych przez MST
+		//budowanie kolejki priorytetowej wierzcho³ków osi¹galnych przez MST
 		TkolejkaKrawedzi kolejka;
 		for (uint i = 0; i < v; i++){				//i = koniec 1, bo macierz grafu nieskierowanego jest symetryczna
-			if (uint waga = graf[koniec1][i])		//sprawdzam krawêdzie wychodz¹ce z koniec1 i przy okazji przypisujê do zmiennej "waga"
-				kolejka.push(*(new krawedz(koniec1, i, waga)));
-			if (koniec2 != koniec1)					//jeœli graf ma dwa ró¿ne koñce
-				if (uint waga = graf[koniec2][i])	//sprawdzam krawêdzie wychodz¹ce z koniec2
-					kolejka.push(*(new krawedz(koniec2, i, waga)));
+			if (odwiedzone[i]){
+				for (uint j = 0; j < v; j++)
+					if (uint waga = graf[i][j])		//sprawdzam krawêdzie wychodz¹ce z koniec1 i przy okazji przypisujê do zmiennej "waga"
+						kolejka.push(*(new krawedz(i, j, waga)));
+			}
 		}
 		bool dodanoKrawedz = false;
 		while (!dodanoKrawedz && !kolejka.empty()){ //wykonuj dopóki krawêdŸ nie zostanie dodana i kolejka nie zostanie wyczerpana
@@ -75,9 +72,8 @@ bool Macierzowo::algorytmPrima(){
 			kolejka.pop();
 			if (odwiedzone[tempKraw.v2] == false){	//jeœli wierzcholek jeszcze nie by³ odwiedzony
 				//to dodaj krawêdŸ do MST
-				sumaWag += tempDrzewoRozp[tempKraw.v2][tempKraw.v1] = tempDrzewoRozp[tempKraw.v1][tempKraw.v2] = tempKraw.waga; 
-				koniec2 = tempKraw.v2;
-				odwiedzone[koniec2] = true;
+				sumaWag += tempDrzewoRozp[tempKraw.v2][tempKraw.v1] = tempDrzewoRozp[tempKraw.v1][tempKraw.v2] = tempKraw.waga;
+				odwiedzone[tempKraw.v2] = true;
 				dodanoKrawedz = true;
 			}
 		}
@@ -92,7 +88,7 @@ bool Macierzowo::algorytmPrima(){
 void Macierzowo::wyswietlPrima(){
 	//wyœwietla, po czym usuwa z pamieci drzewa MST
 	wyswietl(drzewoRozpinajace);
-	usun(drzewoRozpinajace);
+	czyscPrima();
 }
 
 
@@ -121,7 +117,7 @@ bool Macierzowo::algorytmDijkstry(){
 		for (uint i = 0; i < v; i++)										//iteracja po ka¿dym z mo¿liwyuch s¹siadów
 			if (uint waga = graf[idxMinimum][i])							//jeœli pod danym indexem istnieje krawêdŸ:
 				if (tabOdleglosci[i] > tabOdleglosci[idxMinimum] + waga){
-					tabOdleglosci[i] = tabOdleglosci[idxMinimum] + waga;			//to zmodyfikuj odpowiednio
+					tabOdleglosci[i] = tabOdleglosci[idxMinimum] + waga;	//to zmodyfikuj odpowiednio
 					tabPoprzednikow[i] = idxMinimum;
 				}
 	}
@@ -130,7 +126,7 @@ bool Macierzowo::algorytmDijkstry(){
 }
 
 uint Macierzowo::zwrocIdxMinimum(uint *odleglosci, bool *limiter){
-	uint minimum = v-1;
+	uint minimum = v;
 	for (uint i = 0; i < v; i++)
 		if( ! limiter[i])		//poniewa¿ szukamy w zbiorze wierzcho³ków dla których odleg³oœæ nie zosta³a jeszcze obliczona
 			if (odleglosci[i] < odleglosci[minimum])
@@ -139,20 +135,28 @@ uint Macierzowo::zwrocIdxMinimum(uint *odleglosci, bool *limiter){
 }
 
 void Macierzowo::wyswietlDijkstry(){
-	printf("index:  ");
+	printf("wierzch.:  ");
 	for (uint i = 0; i < v; i++)
 		printf("%d ", i);
-	printf("\nodl(i): ");
+	printf("\nodleglosc: ");
 	for (uint i = 0; i < v; i++)
 		printf("%d ", tabOdleglosci[i]);
-	printf("\npop(i): ");
-	for (uint i = 0; i < v; i++)
-		printf("%d ", tabPoprzednikow[i]);
-
-	delete[] tabOdleglosci;
-	delete[] tabPoprzednikow;
 }
 
+void Macierzowo::wyswietlDrogi(){
+	for (uint i = 0; i < v; i++){
+		printf("\n%d. : ", i);
+		uint nrWierzch = tabPoprzednikow[i];
+		while (nrWierzch != v0){
+			printf("%d, ", nrWierzch);
+			nrWierzch = tabPoprzednikow[nrWierzch];
+		}
+		if(i != v0)
+			printf("%d", v0);
+	}
+	printf("\n");
+	czyscDijkstry();
+}
 
 bool Macierzowo::utworzGraf(uint iloscWierzcholkow){
 	if (pierwszeWczytywanie == false)	//jeœli graf tworzony jest niepierwszy raz w obecnym obiekcie
@@ -300,4 +304,13 @@ bool Macierzowo::wczytajZPliku(const char nazwaPliku[], bool dlaProblemuNajkrots
 
 uint Macierzowo::getV0(){
 	return v0;
+}
+
+void Macierzowo::czyscDijkstry(){
+	delete[] tabOdleglosci;
+	delete[] tabPoprzednikow;
+}
+
+void Macierzowo::czyscPrima(){
+	usun(drzewoRozpinajace);
 }

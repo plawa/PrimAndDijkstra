@@ -12,6 +12,10 @@ private:
 	void generujGraf(bool dlaPNS);
 	void algorytmPrima();
 	void algorytmDijkstry();
+	void eksperyment();
+	void testPrima(int iloscWierzch, int gestosc);
+	void testDijkstry(int iloscWierzch, int gestosc);
 	Macierzowo macierzowo;
 	Listowo listowo;
+	PomiarCzasu timer;
 };

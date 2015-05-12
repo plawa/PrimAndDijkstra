@@ -1,16 +1,12 @@
 #pragma once
 #include "stdafx.h"
 #include "Listowo.h"
-
-#define NIESKONCZONOSC 4294967295
-
 using namespace std;
+#define NIESKONCZONOSC 4294967295 //max zakres dla unsigned int
 
 struct krawedz;
 struct porownajWagi;
-struct wierzch;
-struct porownajOdleglosci;
-typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //deklaracja typu kolejki dla algorytmu Prima
+typedef priority_queue<krawedz, vector<krawedz>, porownajWagi> TkolejkaKrawedzi; //kolejka priorytetowa, sortuj¹ca krawêdzie rosn¹co po wagach
 typedef unsigned int uint;
 
 class Macierzowo {
@@ -27,6 +23,9 @@ public:
 	uint getV0();
 	void wyswietlPrima();
 	void wyswietlDijkstry();
+	void wyswietlDrogi();
+	void czyscDijkstry();
+	void czyscPrima();
 private:
 	bool utworzGraf(uint iloscWierzcholkow); //tworzy pusty graf (same wierzcho³ki, bez krawêdzi)
 	bool utworzGraf(); //tworzy pusty graf nie zmieniaj¹c obecnej iloœci wierzcho³ków
